@@ -1,0 +1,16 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+        <section>
+            <form method="POST" action="{% url 'new_post' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea class="form-control" type="textarea" name="post_text" placeholder="Post Content" rows="3" required></textarea>
+                </div>
+
+                <input class="btn btn-primary" type="submit" value="Add Post">
+            </form>
+        </section>
+    {% endif %}
+{% endblock %}
