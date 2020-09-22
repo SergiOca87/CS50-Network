@@ -70,8 +70,11 @@ def register(request):
 
 def user(request, user_id):
     user = User.objects.get(id=user_id)
+    current_user = request.user
+
     return render(request, "network/user.html", {
-        "user": user
+        "user": user,
+        "current_user": current_user
     })
 
 def new_post(request):
