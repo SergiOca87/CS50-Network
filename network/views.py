@@ -68,12 +68,12 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-def user(request, user_id):
-    user = User.objects.get(id=user_id)
+def author(request, author_id):
+    author = list(User.objects.filter(author=author_id))
     current_user = request.user
 
-    return render(request, "network/user.html", {
-        "user": user,
+    return render(request, "network/author.html", {
+        "author": author,
         "current_user": current_user
     })
 

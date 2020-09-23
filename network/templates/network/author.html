@@ -1,0 +1,28 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <p>{{ author }}'s profile page</p>
+    <p>Followers: Following: </p>
+    <p>User Posts:</p>
+
+    <!-- if it's not current user... -->
+    {% if author.id is not current_user.id %}
+        <div class="buttons-wrap">
+
+            <form action="{% url 'author' post.author.id %}" method="post">
+                {% csrf_token %}
+                    <input type="submit" name="follow" class="btn btn-primary" value="Follow">
+                {% if created_by == user %}
+                    <input type="submit" name="unfollow" class="btn btn-danger" value="Unfollow">
+                {% endif %}
+            </form>
+        </div>
+    {% endif %}
+
+    {% for post in posts %}
+        <div class="card">
+            <p>{{ post.post_text }}</p>
+            <p>Likes: 0</p>
+        </div>
+    {% endfor %}
+{% endblock %}

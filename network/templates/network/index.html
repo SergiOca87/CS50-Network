@@ -5,7 +5,7 @@
         <div class="card">
             <p>{{ post.post_text }}</p>
             <p>Likes: 0</p>
-            <p>By: <a href="{% url 'user' user.id %}">{{ post.author }}</a></p>
+            <p>By: <a href="{% url 'author' post.author.id %}">{{ post.author }}</a></p>
         </div>
     {% endfor %}
 {% endblock %}
