@@ -2,27 +2,27 @@
 
 {% block body %}
     <p>{{ author }}'s profile page</p>
-    <p>Followers: Following: </p>
-    <p>User Posts:</p>
+    <p>Followers: {{followers}} - Following: {{following}} </p>
+   
 
     <!-- if it's not current user... -->
-    {% if author.id is not current_user.id %}
+    <!-- There is no post here to use post.author...Provide it -->
+    {% if not is_author %}
         <div class="buttons-wrap">
-
-            <form action="{% url 'author' post.author.id %}" method="post">
+            <form action="{% url 'author' author.id %}" method="post">
                 {% csrf_token %}
                     <input type="submit" name="follow" class="btn btn-primary" value="Follow">
-                {% if created_by == user %}
-                    <input type="submit" name="unfollow" class="btn btn-danger" value="Unfollow">
-                {% endif %}
             </form>
         </div>
     {% endif %}
+    <hr>
 
+    <p>User Posts:</p>
     {% for post in posts %}
         <div class="card">
             <p>{{ post.post_text }}</p>
             <p>Likes: 0</p>
+            <p>Posted on: {{ post.published_date }}</p>
         </div>
     {% endfor %}
 {% endblock %}

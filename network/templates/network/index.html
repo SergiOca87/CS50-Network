@@ -6,6 +6,7 @@
             <p>{{ post.post_text }}</p>
             <p>Likes: 0</p>
             <p>By: <a href="{% url 'author' post.author.id %}">{{ post.author }}</a></p>
+            <p>Posted on: {{ post.published_date }}</p>
         </div>
     {% endfor %}
 {% endblock %}

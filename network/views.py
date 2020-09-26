@@ -9,7 +9,7 @@ from .models import User, Post
 
 
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.order_by('-published_date').all()
     # .order_by("-timestamp").all()
     # posts = posts.order_by("-timestamp").all()
     return render(request, "network/index.html", {
@@ -69,12 +69,30 @@ def register(request):
         return render(request, "network/register.html")
 
 def author(request, author_id):
-    author = list(User.objects.filter(author=author_id))
+    author = User.objects.get(id=author_id)
     current_user = request.user
+    following = author.following.all().count
+    followers = author.followers.all().count
+    posts = Post.objects.filter(author=author.id).order_by('-published_date').all()
+    
+    is_author = False
+    if author.id == current_user.id:
+        is_author = True
 
+    if request.method == "POST":
+        if 'follow' in request.POST and request.POST['follow']:
+            current_user.following.add(author)
+            author.followers.add(current_user)
+            return HttpResponseRedirect(reverse('following'))
+
+   
+    
     return render(request, "network/author.html", {
         "author": author,
-        "current_user": current_user
+        "is_author": is_author,
+        "following": following,
+        "followers": followers,
+        "posts": posts
     })
 
 def new_post(request):
@@ -91,3 +109,5 @@ def new_post(request):
     else:
         return render(request, "network/new_post.html")
 
+def following(request):
+    return render(request, "network/following.html")
