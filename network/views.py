@@ -89,8 +89,6 @@ def author(request, author_id):
             author.followers.add(current_user)
             return HttpResponseRedirect(reverse('following'))
 
-   
-    
     return render(request, "network/author.html", {
         "author": author,
         "is_author": is_author,
@@ -112,6 +110,24 @@ def new_post(request):
         return HttpResponseRedirect(reverse('index'))
     else:
         return render(request, "network/new_post.html")
+
+
+# get, to show the form with the post content (retrieve post by id)
+# post, to modify existing post in the database
+def edit_post(request, post_id):
+    if request.method == "POST":
+        post = Post.objects.get(pk=post_id)
+        post_text = request.POST["post_text"]
+        # timestamp = datetime.now()
+        post.post_text = post_text
+        post.save();
+   
+        return HttpResponseRedirect(reverse('index'))
+    else:
+        post = Post.objects.get(pk=post_id)
+        return render(request, "network/edit_post.html", {
+        "post": post
+    })
 
 def following(request):
     following = request.user.following.all()

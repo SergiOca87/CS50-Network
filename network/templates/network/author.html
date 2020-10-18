@@ -23,6 +23,9 @@
             <p>{{ post.post_text }}</p>
             <p>Likes: 0</p>
             <p>Posted on: {{ post.published_date }}</p>
+            {% if is_author %}
+                <a href="{% url 'edit_post' post.id %}" class="btn btn-primary">Edit Post</a>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}
