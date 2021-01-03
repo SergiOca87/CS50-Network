@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from datetime import datetime
+import json
 from django.core.paginator import Paginator
 
 from .models import User, Post
@@ -14,11 +15,14 @@ def index(request):
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    user_likes = list(request.user.likes.all())
     # .order_by("-timestamp").all()
     # posts = posts.order_by("-timestamp").all()
+    print(user_likes)
     return render(request, "network/index.html", {
         "posts": posts,
-        'page_obj': page_obj
+        'page_obj': page_obj,
+        "user_likes": user_likes
     })
 
 
@@ -125,8 +129,26 @@ def new_post(request):
         return render(request, "network/new_post.html")
 
 
+def likes(request, post_id):
+    current_user = request.user
+    post = Post.objects.get(pk=post_id)
+    print(current_user.likes.all())
+
+    if request.method == "PUT":
+        data = json.loads(request.body)
+
+        print('user is', current_user)
+        if data.get('like') == 'true':
+            current_user.likes.add(post)
+        else:
+            current_user.likes.remove(post)
+
+    return HttpResponse(status=204)
+
 # get, to show the form with the post content (retrieve post by id)
 # post, to modify existing post in the database
+
+
 def edit_post(request, post_id):
     if request.method == "POST":
         post = Post.objects.get(pk=post_id)

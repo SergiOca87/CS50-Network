@@ -2,12 +2,22 @@
 
 {% block body %}
     {% for post in page_obj %}
-        <div class="card">
+        <div class="card align-items-start">
             <p>{{ post.post_text }}</p>
             <p>Likes: 0</p>
             <p>By: <a href="{% url 'author' post.author.id %}">{{ post.author }}</a></p>
             <p>Posted on: {{ post.published_date }}</p>
+    
+            {% if post.author != user %}
+                {% if post in user_likes %}
+                    <a class="btn btn-danger like-toggle" href="#" data-post-id="{{ post.id }}" data-likes="false">Unlike</a>
+                {% else %}
+                    <a class="btn btn-primary like-toggle" href="#" data-post-id="{{ post.id }}" data-likes="true">Like</a>
+                {% endif %}
+            {% endif %}
+            </form>
         </div>
+
     {% endfor %}
 
     <ul class="pagination">
