@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 
 from .models import User, Post
 
+
 def index(request):
     posts = Post.objects.order_by('-published_date').all()
     paginator = Paginator(posts, 10)
@@ -72,13 +73,19 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+
 def author(request, author_id):
     author = User.objects.get(id=author_id)
     current_user = request.user
-    following = author.following.all().count
-    followers = author.followers.all().count
-    posts = Post.objects.filter(author=author.id).order_by('-published_date').all()
-    
+    following = author.following.all()
+    followers = author.followers.all()
+    is_following = True
+    posts = Post.objects.filter(
+        author=author.id).order_by('-published_date').all()
+
+    if current_user in list(author.followers.all()):
+        is_following = False
+
     is_author = False
     if author.id == current_user.id:
         is_author = True
@@ -88,14 +95,20 @@ def author(request, author_id):
             current_user.following.add(author)
             author.followers.add(current_user)
             return HttpResponseRedirect(reverse('following'))
+        elif 'unfollow' in request.POST and request.POST['unfollow']:
+            current_user.following.remove(author)
+            author.followers.remove(current_user)
+            return HttpResponseRedirect(reverse("index"))
 
     return render(request, "network/author.html", {
         "author": author,
         "is_author": is_author,
         "following": following,
         "followers": followers,
+        "is_following": is_following,
         "posts": posts
     })
+
 
 def new_post(request):
     if request.method == "POST":
@@ -103,7 +116,7 @@ def new_post(request):
         post_text = request.POST["post_text"]
         # timestamp = datetime.now()
 
-        f = Post(author = author, post_text = post_text)
+        f = Post(author=author, post_text=post_text)
         f.save()
 
         # Instead return the all posts url, once defined
@@ -120,14 +133,15 @@ def edit_post(request, post_id):
         post_text = request.POST["post_text"]
         # timestamp = datetime.now()
         post.post_text = post_text
-        post.save();
-   
+        post.save()
+
         return HttpResponseRedirect(reverse('index'))
     else:
         post = Post.objects.get(pk=post_id)
         return render(request, "network/edit_post.html", {
-        "post": post
-    })
+            "post": post
+        })
+
 
 def following(request):
     following = request.user.following.all()

@@ -2,16 +2,23 @@
 
 {% block body %}
     <p>{{ author }}'s profile page</p>
-    <p>Followers: {{followers}} - Following: {{following}} </p>
+    <p>Followers: {{followers.count}} - Following: {{following.count}} </p>
    
 
     <!-- if it's not current user... -->
     <!-- There is no post here to use post.author...Provide it -->
-    {% if not is_author %}
+    {% if not is_author and is_following %}
         <div class="buttons-wrap">
             <form action="{% url 'author' author.id %}" method="post">
                 {% csrf_token %}
-                    <input type="submit" name="follow" class="btn btn-primary" value="Follow">
+                <input type="submit" name="follow" class="btn btn-primary" value="Follow">
+            </form>
+        </div>
+    {% elif not is_author and not is_following %}
+        <div class="buttons-wrap">
+            <form action="{% url 'author' author.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" name="unfollow" class="btn btn-danger" value="Unfollow">
             </form>
         </div>
     {% endif %}
