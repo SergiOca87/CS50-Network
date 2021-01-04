@@ -4,7 +4,11 @@
     {% for post in page_obj %}
         <div class="card align-items-start">
             <p>{{ post.post_text }}</p>
-            <p>Likes: 0</p>
+            {% if post.like_count is None %}
+                <p>Likes: 0</p>
+            {% else %}
+                <p class="likes">Likes: <span>{{ post.like_count }}</span></p>
+            {% endif %}
             <p>By: <a href="{% url 'author' post.author.id %}">{{ post.author }}</a></p>
             <p>Posted on: {{ post.published_date }}</p>
     
@@ -14,8 +18,9 @@
                 {% else %}
                     <a class="btn btn-primary like-toggle" href="#" data-post-id="{{ post.id }}" data-likes="true">Like</a>
                 {% endif %}
+            {% else %}
+                <a href="{% url 'edit_post' post.id %}" class="btn btn-primary">Edit Post</a>
             {% endif %}
-            </form>
         </div>
 
     {% endfor %}

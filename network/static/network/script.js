@@ -20,16 +20,23 @@ window.addEventListener('DOMContentLoaded', function () {
 			}),
 		})
 			.then(() => {
+				let likeCount = element.parentNode.querySelector('.likes span');
 				if (element.classList.contains('btn-danger')) {
 					element.classList.remove('btn-danger');
 					element.classList.add('btn-primary');
 					element.textContent = 'Like';
 					element.dataset.likes = 'True';
+					likeCount.textContent =
+						parseInt(likeCount.textContent, 10) <= 0
+							? (likeCount.textContent = '0')
+							: parseInt(likeCount.textContent, 10) - 1;
 				} else {
 					element.classList.remove('btn-primary');
 					element.classList.add('btn-danger');
 					element.textContent = 'Unlike';
 					element.dataset.likes = 'False';
+					likeCount.textContent =
+						parseInt(likeCount.textContent, 10) + 1;
 				}
 			})
 			.catch((error) => {

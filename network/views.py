@@ -16,6 +16,7 @@ def index(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     user_likes = list(request.user.likes.all())
+
     # .order_by("-timestamp").all()
     # posts = posts.order_by("-timestamp").all()
     print(user_likes)
@@ -132,16 +133,24 @@ def new_post(request):
 def likes(request, post_id):
     current_user = request.user
     post = Post.objects.get(pk=post_id)
-    print(current_user.likes.all())
 
     if request.method == "PUT":
         data = json.loads(request.body)
 
-        print('user is', current_user)
         if data.get('like') == 'true':
             current_user.likes.add(post)
+            if post.like_count == None:
+                post.like_count = 1
+            else:
+                post.like_count += 1
+            post.save()
         else:
             current_user.likes.remove(post)
+            if post.like_count == None:
+                post.like_count = 0
+            else:
+                post.like_count -= 1
+            post.save()
 
     return HttpResponse(status=204)
 

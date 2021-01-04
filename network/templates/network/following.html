@@ -1,12 +1,25 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    {% for post in posts %}
-        <div class="card">
-            <p>{{ post.post_text }}</p>
-            <p>Likes: 0</p>
-            <p>By: <a href="{% url 'author' post.author.id %}">{{ post.author }}</a></p>
-            <p>Posted on: {{ post.published_date }}</p>
-        </div>
-    {% endfor %}
+    {% if posts %}
+        {% for post in posts %}
+            <div class="card align-items-start">
+                <p>{{ post.post_text }}</p>
+                {% if post.like_count is None %}
+                    <p>Likes: 0</p>
+                {% else %}
+                    <p class="likes">Likes: <span>{{ post.like_count }}</span></p>
+                {% endif %}
+                <p>By: <a href="{% url 'author' post.author.id %}">{{ post.author }}</a></p>
+                <p>Posted on: {{ post.published_date }}</p>
+                {% if post in user_likes %}
+                    <a class="btn btn-danger like-toggle" href="#" data-post-id="{{ post.id }}" data-likes="false">Unlike</a>
+                {% else %}
+                    <a class="btn btn-primary like-toggle" href="#" data-post-id="{{ post.id }}" data-likes="true">Like</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <h3>You don't seem to be following anyone.</h3>
+    {% endif %}
 {% endblock %}

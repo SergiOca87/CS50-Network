@@ -20,7 +20,7 @@ class Post(models.Model):
     post_text = models.CharField(
         max_length=280, default=None, null=True, blank=True)
     # add post likes, a number that is incremented?
-
+    like_count = models.IntegerField(default=0, null=True, blank=True)
 
 # Likes
 
